@@ -8,6 +8,9 @@ const ADMIN_PASS = "setsuna214";
 let content = null;
 let defaults = null;
 
+const AVATAR_SIZE = 900;
+const AVATAR_QUALITY = 0.86;
+
 async function loadContent() {
   const response = await fetch("./data/content.json", { cache: "no-store" });
   defaults = await response.json();
@@ -72,6 +75,12 @@ function setByPath(path, value) {
   const last = keys.pop();
   const target = keys.reduce((next, key) => next[key], content);
   target[last] = value;
+}
+
+function setFieldValue(path, value) {
+  setByPath(path, value);
+  const field = document.querySelector(`[name="${path}"]`);
+  if (field) field.value = value;
 }
 
 function toast(message) {
@@ -157,6 +166,42 @@ function render() {
   renderStats();
   renderSections();
   renderUpdates();
+}
+
+function readImage(file) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      image.src = reader.result;
+    });
+    reader.addEventListener("error", () => reject(new Error("图片读取失败")));
+    image.addEventListener("error", () => reject(new Error("图片格式无法识别")));
+    image.addEventListener("load", () => resolve(image));
+
+    reader.readAsDataURL(file);
+  });
+}
+
+async function imageToAvatarDataUrl(file) {
+  if (!file.type.startsWith("image/")) throw new Error("请选择图片文件");
+
+  const image = await readImage(file);
+  const canvas = document.createElement("canvas");
+  canvas.width = AVATAR_SIZE;
+  canvas.height = AVATAR_SIZE;
+
+  const context = canvas.getContext("2d");
+  const side = Math.min(image.naturalWidth, image.naturalHeight);
+  const sx = (image.naturalWidth - side) / 2;
+  const sy = (image.naturalHeight - side) / 2;
+
+  context.fillStyle = "#fffaf2";
+  context.fillRect(0, 0, AVATAR_SIZE, AVATAR_SIZE);
+  context.drawImage(image, sx, sy, side, side, 0, 0, AVATAR_SIZE, AVATAR_SIZE);
+
+  return canvas.toDataURL("image/jpeg", AVATAR_QUALITY);
 }
 
 function collect() {
@@ -261,6 +306,32 @@ async function publishContent() {
 }
 
 document.getElementById("saveBtn").addEventListener("click", publishContent);
+
+document.getElementById("avatarUpload").addEventListener("change", async (event) => {
+  if (!isAuthed()) return;
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  try {
+    collect();
+    const dataUrl = await imageToAvatarDataUrl(file);
+    setFieldValue("profile.avatar", dataUrl);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
+    toast("头像已载入，点击保存并发布后生效");
+  } catch (error) {
+    toast(error.message || "头像处理失败");
+  } finally {
+    event.target.value = "";
+  }
+});
+
+document.getElementById("clearAvatarBtn").addEventListener("click", () => {
+  if (!isAuthed()) return;
+  collect();
+  setFieldValue("profile.avatar", "");
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
+  toast("头像已清除，点击保存并发布后生效");
+});
 
 document.getElementById("exportBtn").addEventListener("click", () => {
   downloadJson();

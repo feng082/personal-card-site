@@ -420,6 +420,26 @@ textarea {
   outline: none;
 }
 
+input[type="file"] {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.upload-row input {
+  flex: 1 1 260px;
+}
+
+.upload-row button {
+  flex: none;
+}
+
 textarea {
   resize: vertical;
 }

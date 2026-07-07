@@ -42,7 +42,11 @@
             <label>一句话定位<input name="profile.tagline" type="text"></label>
             <label>所在地区<input name="profile.location" type="text"></label>
             <label>状态<input name="profile.status" type="text"></label>
-            <label class="wide">头像图片地址<input name="profile.avatar" type="url" placeholder="https://..."></label>
+            <label class="wide">头像图片地址<input name="profile.avatar" type="url" placeholder="https://... 或选择本地图片"></label>
+            <div class="wide upload-row">
+              <input id="avatarUpload" type="file" accept="image/*">
+              <button class="ghost-button" id="clearAvatarBtn" type="button">清除头像</button>
+            </div>
             <label class="wide">自我介绍<textarea name="profile.intro" rows="5"></textarea></label>
           </div>
         </section>
