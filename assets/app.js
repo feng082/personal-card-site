@@ -124,6 +124,31 @@ function render(content) {
       </div>
     </article>
   `).join("");
+
+  setupReveal();
+}
+
+function setupReveal() {
+  const items = document.querySelectorAll(".hero-copy, .portrait, .stat, .info-card, .timeline-item, .contact-card");
+  items.forEach((item) => item.classList.add("reveal"));
+
+  if (!("IntersectionObserver" in window)) {
+    items.forEach((item) => item.classList.add("is-visible"));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.16 });
+
+  items.forEach((item, index) => {
+    item.style.transitionDelay = `${Math.min(index * 35, 240)}ms`;
+    observer.observe(item);
+  });
 }
 
 loadContent().then(render).catch(() => {
