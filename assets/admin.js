@@ -11,8 +11,28 @@ async function loadContent() {
   defaults = await response.json();
 
   const local = localStorage.getItem(STORAGE_KEY);
-  if (local) return JSON.parse(local);
-  return structuredClone(defaults);
+  if (local) return normalizeContent(JSON.parse(local));
+  return normalizeContent(structuredClone(defaults));
+}
+
+function normalizeContent(data) {
+  data.links = data.links || [];
+  data.links.forEach((link) => {
+    if (link.qr == null) link.qr = "";
+  });
+
+  const hasDouyin = data.links.some((link) => String(link.label || "").includes("抖音"));
+  if (!hasDouyin) {
+    const wechatIndex = data.links.findIndex((link) => String(link.label || "").includes("微信"));
+    data.links.splice(Math.max(wechatIndex + 1, 0), 0, {
+      label: "抖音",
+      value: "扫码关注抖音",
+      url: "",
+      qr: ""
+    });
+  }
+
+  return data;
 }
 
 function isAuthed() {

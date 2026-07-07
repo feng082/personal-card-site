@@ -2,10 +2,30 @@ const STORAGE_KEY = "personal-card-content";
 
 async function loadContent() {
   const local = localStorage.getItem(STORAGE_KEY);
-  if (local) return JSON.parse(local);
+  if (local) return normalizeContent(JSON.parse(local));
 
   const response = await fetch("./data/content.json", { cache: "no-store" });
-  return response.json();
+  return normalizeContent(await response.json());
+}
+
+function normalizeContent(content) {
+  content.links = content.links || [];
+  content.links.forEach((link) => {
+    if (link.qr == null) link.qr = "";
+  });
+
+  const hasDouyin = content.links.some((link) => text(link.label).includes("抖音"));
+  if (!hasDouyin) {
+    const wechatIndex = content.links.findIndex((link) => text(link.label).includes("微信"));
+    content.links.splice(Math.max(wechatIndex + 1, 0), 0, {
+      label: "抖音",
+      value: "扫码关注抖音",
+      url: "",
+      qr: ""
+    });
+  }
+
+  return content;
 }
 
 function text(value, fallback = "") {
