@@ -10,6 +10,8 @@ let defaults = null;
 
 const AVATAR_SIZE = 900;
 const AVATAR_QUALITY = 0.86;
+const QR_SIZE = 900;
+const QR_QUALITY = 0.9;
 
 async function loadContent() {
   const response = await fetch("./data/content.json", { cache: "no-store" });
@@ -120,6 +122,10 @@ function renderLinks() {
       <label>显示内容${input(`links.${index}.value`, item.value)}</label>
       <label class="wide">跳转地址${input(`links.${index}.url`, item.url, "https://... 或 mailto:...")}</label>
       <label class="wide">二维码图片地址${input(`links.${index}.qr`, item.qr, "https://...，微信/抖音可填写二维码图片")}</label>
+      <div class="wide upload-row">
+        <input type="file" accept="image/*" data-qr-upload="${index}">
+        <button class="ghost-button" type="button" data-qr-clear="${index}">清除二维码</button>
+      </div>
     </article>
   `).join("");
 }
@@ -188,9 +194,20 @@ async function imageToAvatarDataUrl(file) {
   if (!file.type.startsWith("image/")) throw new Error("请选择图片文件");
 
   const image = await readImage(file);
+  return imageToSquareDataUrl(image, AVATAR_SIZE, AVATAR_QUALITY);
+}
+
+async function imageToQrDataUrl(file) {
+  if (!file.type.startsWith("image/")) throw new Error("请选择图片文件");
+
+  const image = await readImage(file);
+  return imageToSquareDataUrl(image, QR_SIZE, QR_QUALITY);
+}
+
+function imageToSquareDataUrl(image, size, quality) {
   const canvas = document.createElement("canvas");
-  canvas.width = AVATAR_SIZE;
-  canvas.height = AVATAR_SIZE;
+  canvas.width = size;
+  canvas.height = size;
 
   const context = canvas.getContext("2d");
   const side = Math.min(image.naturalWidth, image.naturalHeight);
@@ -198,10 +215,10 @@ async function imageToAvatarDataUrl(file) {
   const sy = (image.naturalHeight - side) / 2;
 
   context.fillStyle = "#fffaf2";
-  context.fillRect(0, 0, AVATAR_SIZE, AVATAR_SIZE);
-  context.drawImage(image, sx, sy, side, side, 0, 0, AVATAR_SIZE, AVATAR_SIZE);
+  context.fillRect(0, 0, size, size);
+  context.drawImage(image, sx, sy, side, side, 0, 0, size, size);
 
-  return canvas.toDataURL("image/jpeg", AVATAR_QUALITY);
+  return canvas.toDataURL("image/jpeg", quality);
 }
 
 function collect() {
@@ -331,6 +348,40 @@ document.getElementById("clearAvatarBtn").addEventListener("click", () => {
   setFieldValue("profile.avatar", "");
   localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
   toast("头像已清除，点击保存并发布后生效");
+});
+
+document.getElementById("linksEditor").addEventListener("change", async (event) => {
+  if (!isAuthed()) return;
+  const input = event.target.closest("[data-qr-upload]");
+  if (!input) return;
+
+  const index = Number(input.dataset.qrUpload);
+  const file = input.files && input.files[0];
+  if (!file) return;
+
+  try {
+    collect();
+    const dataUrl = await imageToQrDataUrl(file);
+    setFieldValue(`links.${index}.qr`, dataUrl);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
+    toast("二维码已载入，点击保存并发布后生效");
+  } catch (error) {
+    toast(error.message || "二维码处理失败");
+  } finally {
+    input.value = "";
+  }
+});
+
+document.getElementById("linksEditor").addEventListener("click", (event) => {
+  if (!isAuthed()) return;
+  const button = event.target.closest("[data-qr-clear]");
+  if (!button) return;
+
+  collect();
+  const index = Number(button.dataset.qrClear);
+  setFieldValue(`links.${index}.qr`, "");
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
+  toast("二维码已清除，点击保存并发布后生效");
 });
 
 document.getElementById("exportBtn").addEventListener("click", () => {
