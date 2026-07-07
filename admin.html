@@ -4,20 +4,84 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>内容管理</title>
-    <meta name="description" content="个人名片网站后台管理。">
+    <meta name="description" content="个人名片网站内容管理。">
     <link rel="stylesheet" href="./assets/styles.css">
   </head>
   <body class="admin-body">
     <header class="site-header">
       <a class="brand" href="./index.html">返回首页</a>
+      <nav class="nav admin-actions hidden" id="adminActions" aria-label="后台操作">
+        <button class="ghost-button" id="resetBtn" type="button">恢复默认</button>
+        <button class="ghost-button" id="logoutBtn" type="button">退出</button>
+        <button class="primary-button" id="saveBtn" type="button">保存到本机</button>
+        <button class="primary-button" id="exportBtn" type="button">下载配置</button>
+      </nav>
     </header>
 
     <main class="admin-shell">
       <section class="admin-title">
         <p class="kicker">Admin</p>
-        <h1>管理入口已关闭</h1>
-        <p>公开静态网站不能安全地提供无后端的在线后台。这个入口已关闭，避免访客误以为可以编辑线上内容。</p>
+        <h1>内容管理</h1>
+        <p>登录后可以编辑首页内容。这个登录只在浏览器前端生效，用来挡住普通访问；线上内容仍需要下载配置并提交到 GitHub 才会更新。</p>
       </section>
+
+      <section class="login-panel" id="loginPanel">
+        <form id="loginForm" class="login-form">
+          <label>账号<input id="username" name="username" type="text" autocomplete="username"></label>
+          <label>密码<input id="password" name="password" type="password" autocomplete="current-password"></label>
+          <button class="primary-button" type="submit">登录</button>
+          <p class="login-error" id="loginError" role="alert"></p>
+        </form>
+      </section>
+
+      <form id="adminForm" class="admin-form hidden">
+        <section class="editor-panel">
+          <h2>基础信息</h2>
+          <div class="form-grid">
+            <label>名字<input name="profile.name" type="text"></label>
+            <label>一句话定位<input name="profile.tagline" type="text"></label>
+            <label>所在地区<input name="profile.location" type="text"></label>
+            <label>状态<input name="profile.status" type="text"></label>
+            <label class="wide">头像图片地址<input name="profile.avatar" type="url" placeholder="https://..."></label>
+            <label class="wide">自我介绍<textarea name="profile.intro" rows="5"></textarea></label>
+          </div>
+        </section>
+
+        <section class="editor-panel">
+          <div class="panel-heading">
+            <h2>联系方式</h2>
+            <button class="ghost-button" type="button" data-add="links">新增</button>
+          </div>
+          <div class="repeat-list" id="linksEditor"></div>
+        </section>
+
+        <section class="editor-panel">
+          <div class="panel-heading">
+            <h2>数字卡片</h2>
+            <button class="ghost-button" type="button" data-add="stats">新增</button>
+          </div>
+          <div class="repeat-list" id="statsEditor"></div>
+        </section>
+
+        <section class="editor-panel">
+          <div class="panel-heading">
+            <h2>内容模块</h2>
+            <button class="ghost-button" type="button" data-add="sections">新增</button>
+          </div>
+          <div class="repeat-list" id="sectionsEditor"></div>
+        </section>
+
+        <section class="editor-panel">
+          <div class="panel-heading">
+            <h2>更新记录</h2>
+            <button class="ghost-button" type="button" data-add="updates">新增</button>
+          </div>
+          <div class="repeat-list" id="updatesEditor"></div>
+        </section>
+      </form>
     </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./assets/admin.js"></script>
   </body>
 </html>
