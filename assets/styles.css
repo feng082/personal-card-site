@@ -159,6 +159,17 @@ textarea {
   margin-top: 28px;
 }
 
+.contact-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(160px, 1fr));
+  align-items: start;
+}
+
+.contact-card {
+  display: grid;
+  gap: 10px;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
@@ -173,6 +184,36 @@ textarea {
 
 .pill small {
   color: var(--muted);
+}
+
+.qr-image,
+.qr-placeholder {
+  width: 152px;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: white;
+  box-shadow: 0 8px 24px rgba(49, 50, 45, 0.08);
+}
+
+.qr-image {
+  display: block;
+  object-fit: cover;
+  padding: 8px;
+}
+
+.qr-placeholder {
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+  background:
+    linear-gradient(90deg, rgba(31, 107, 93, 0.09) 1px, transparent 1px),
+    linear-gradient(rgba(31, 107, 93, 0.09) 1px, transparent 1px),
+    white;
+  background-size: 14px 14px;
 }
 
 .stats-band {
@@ -446,6 +487,10 @@ textarea:focus {
   .hero-inner,
   .section-grid,
   .contact {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-list {
     grid-template-columns: 1fr;
   }
 

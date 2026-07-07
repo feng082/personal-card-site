@@ -17,12 +17,30 @@ function setText(id, value) {
   if (element) element.textContent = value;
 }
 
+function shouldShowQr(link) {
+  const label = text(link.label).toLowerCase();
+  return Boolean(link.qr) || label.includes("微信") || label.includes("抖音");
+}
+
+function qrBlock(link) {
+  if (!shouldShowQr(link)) return "";
+  const label = text(link.label, "二维码");
+  if (link.qr) {
+    return `<img class="qr-image" src="${link.qr}" alt="${label}二维码">`;
+  }
+  return `<div class="qr-placeholder" aria-label="${label}二维码待补充">二维码待补充</div>`;
+}
+
 function linkMarkup(link) {
   const label = text(link.label, "链接");
   const value = text(link.value, "待补充");
   const href = text(link.url, "");
-  if (!href) return `<span class="pill">${label}<small>${value}</small></span>`;
-  return `<a class="pill" href="${href}" target="_blank" rel="noreferrer">${label}<small>${value}</small></a>`;
+  const content = `<span>${label}</span><small>${value}</small>`;
+  const pill = href
+    ? `<a class="pill" href="${href}" target="_blank" rel="noreferrer">${content}</a>`
+    : `<span class="pill">${content}</span>`;
+
+  return `<article class="contact-card">${pill}${qrBlock(link)}</article>`;
 }
 
 function render(content) {
@@ -45,7 +63,17 @@ function render(content) {
     avatar.style.display = "block";
   }
 
-  document.getElementById("heroLinks").innerHTML = (content.links || []).slice(0, 3).map(linkMarkup).join("");
+  document.getElementById("heroLinks").innerHTML = (content.links || [])
+    .slice(0, 3)
+    .map((link) => {
+      const label = text(link.label, "链接");
+      const value = text(link.value, "待补充");
+      const href = text(link.url, "");
+      if (!href) return `<span class="pill"><span>${label}</span><small>${value}</small></span>`;
+      return `<a class="pill" href="${href}" target="_blank" rel="noreferrer"><span>${label}</span><small>${value}</small></a>`;
+    })
+    .join("");
+
   document.getElementById("contactLinks").innerHTML = (content.links || []).map(linkMarkup).join("");
 
   document.getElementById("stats").innerHTML = (content.stats || []).map((stat) => `

@@ -86,6 +86,7 @@ function renderLinks() {
       <label>名称${input(`links.${index}.label`, item.label)}</label>
       <label>显示内容${input(`links.${index}.value`, item.value)}</label>
       <label class="wide">跳转地址${input(`links.${index}.url`, item.url, "https://... 或 mailto:...")}</label>
+      <label class="wide">二维码图片地址${input(`links.${index}.qr`, item.qr, "https://...，微信/抖音可填写二维码图片")}</label>
     </article>
   `).join("");
 }
@@ -187,7 +188,7 @@ document.addEventListener("click", (event) => {
     collect();
     const type = add.dataset.add;
     const templates = {
-      links: { label: "新链接", value: "待补充", url: "" },
+      links: { label: "新链接", value: "待补充", url: "", qr: "" },
       stats: { value: "00", label: "新卡片", note: "说明文字" },
       sections: { eyebrow: "New", title: "新模块", body: "这里填写正文。", items: ["第一条"] },
       updates: { date: new Date().toISOString().slice(0, 10), title: "新更新", body: "这里填写更新内容。" }

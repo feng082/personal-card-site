@@ -10,18 +10,21 @@
   "links": [
     {
       "label": "微信",
-      "value": "待补充",
-      "url": ""
+      "value": "扫码添加微信",
+      "url": "",
+      "qr": ""
     },
     {
-      "label": "小红书",
-      "value": "待补充",
-      "url": ""
+      "label": "抖音",
+      "value": "扫码关注抖音",
+      "url": "",
+      "qr": ""
     },
     {
       "label": "邮箱",
       "value": "hello@example.com",
-      "url": "mailto:hello@example.com"
+      "url": "mailto:hello@example.com",
+      "qr": ""
     }
   ],
   "stats": [
