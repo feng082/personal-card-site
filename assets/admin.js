@@ -1,5 +1,7 @@
 const STORAGE_KEY = "personal-card-content";
 const AUTH_KEY = "personal-card-admin-auth";
+const AUTH_USER_KEY = "personal-card-admin-user";
+const AUTH_PASS_KEY = "personal-card-admin-pass";
 const ADMIN_USER = "xiaofeng";
 const ADMIN_PASS = "setsuna214";
 
@@ -44,6 +46,8 @@ function setAuthenticated(value) {
     sessionStorage.setItem(AUTH_KEY, "yes");
   } else {
     sessionStorage.removeItem(AUTH_KEY);
+    sessionStorage.removeItem(AUTH_USER_KEY);
+    sessionStorage.removeItem(AUTH_PASS_KEY);
   }
 }
 
@@ -187,6 +191,8 @@ document.getElementById("loginForm").addEventListener("submit", (event) => {
   if (username === ADMIN_USER && password === ADMIN_PASS) {
     error.textContent = "";
     setAuthenticated(true);
+    sessionStorage.setItem(AUTH_USER_KEY, username);
+    sessionStorage.setItem(AUTH_PASS_KEY, password);
     showEditor();
     render();
     return;
@@ -225,11 +231,36 @@ document.addEventListener("click", (event) => {
   }
 });
 
-document.getElementById("saveBtn").addEventListener("click", () => {
+async function publishContent() {
   collect();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
-  toast("已保存到本机");
-});
+
+  const button = document.getElementById("saveBtn");
+  button.disabled = true;
+  button.textContent = "发布中...";
+
+  try {
+    const response = await fetch("/api/save-content", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Admin-User": sessionStorage.getItem(AUTH_USER_KEY) || "",
+        "X-Admin-Pass": sessionStorage.getItem(AUTH_PASS_KEY) || ""
+      },
+      body: JSON.stringify({ content })
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.message || "发布失败");
+    toast("已提交发布，约 1 分钟后全网更新");
+  } catch (error) {
+    toast(error.message || "发布失败，已先保存到本机");
+  } finally {
+    button.disabled = false;
+    button.textContent = "保存并发布";
+  }
+}
+
+document.getElementById("saveBtn").addEventListener("click", publishContent);
 
 document.getElementById("exportBtn").addEventListener("click", () => {
   downloadJson();

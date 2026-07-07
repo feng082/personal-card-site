@@ -27,9 +27,18 @@ http://localhost:5177/admin.html
 - 内容模块
 - 更新记录
 
-点击「保存到本机」后，只会保存在当前浏览器里。
+点击「保存并发布」后，会调用 Vercel 后端接口，把内容提交到 GitHub，并触发 Vercel 自动重新发布。
 
-点击「下载配置」会下载一个 `content.json`。要更新线上网站，需要用这个文件替换仓库里的 `data/content.json`，然后重新提交到 GitHub，Vercel 会自动重新发布。
+点击「下载配置」仍会下载一个 `content.json`，可以作为手动备份。
+
+Vercel 项目需要配置这些环境变量：
+
+- `ADMIN_USER`
+- `ADMIN_PASS`
+- `GITHUB_TOKEN`
+- `GITHUB_OWNER`，默认 `feng082`
+- `GITHUB_REPO`，默认 `personal-card-site`
+- `GITHUB_BRANCH`，默认 `main`
 
 ## 部署到 Vercel
 
@@ -43,12 +52,6 @@ http://localhost:5177/admin.html
 
 部署后会得到一个 `项目名.vercel.app` 地址。
 
-## 如果想要真正的在线后台
+## 在线后台
 
-当前后台是免费的静态方案，适合个人用，但它不能直接把修改写回 Vercel 线上文件。
-
-如果想登录后台后直接改线上内容，可以后续接：
-
-- Supabase：保存内容数据
-- GitHub API：后台直接改仓库文件
-- Decap CMS：适合静态站内容管理
+当前方案不需要数据库。后台保存后会改 GitHub 里的 `data/content.json`，然后等待 Vercel 自动部署。

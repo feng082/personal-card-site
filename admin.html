@@ -13,7 +13,7 @@
       <nav class="nav admin-actions hidden" id="adminActions" aria-label="后台操作">
         <button class="ghost-button" id="resetBtn" type="button">恢复默认</button>
         <button class="ghost-button" id="logoutBtn" type="button">退出</button>
-        <button class="primary-button" id="saveBtn" type="button">保存到本机</button>
+        <button class="primary-button" id="saveBtn" type="button">保存并发布</button>
         <button class="primary-button" id="exportBtn" type="button">下载配置</button>
       </nav>
     </header>
@@ -22,7 +22,7 @@
       <section class="admin-title">
         <p class="kicker">Admin</p>
         <h1>内容管理</h1>
-        <p>登录后可以编辑首页内容。这个登录只在浏览器前端生效，用来挡住普通访问；线上内容仍需要下载配置并提交到 GitHub 才会更新。</p>
+        <p>登录后可以编辑首页内容。点击保存并发布后，会自动更新 GitHub 并触发 Vercel 重新部署。</p>
       </section>
 
       <section class="login-panel" id="loginPanel">
