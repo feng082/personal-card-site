@@ -1,8 +1,8 @@
 {
   "profile": {
-    "name": "你的名字",
-    "tagline": "个人名片 · 记录生活、成长与作品",
-    "intro": "这里先放一段简短的自我介绍。你可以写你是谁、现在关注什么、正在学习或正在做什么，也可以先保持默认文字，后续慢慢补充。",
+    "name": "枫哥说AI",
+    "tagline": "前CRUD码农，通信工程师，自媒体副业运营中",
+    "intro": "前CRUD码农，通信工程师，自媒体副业运营中,全网同id",
     "avatar": "",
     "location": "中国",
     "status": "持续更新中"
@@ -10,7 +10,7 @@
   "links": [
     {
       "label": "微信",
-      "value": "扫码添加微信",
+      "value": "kaede082",
       "url": "",
       "qr": ""
     },
@@ -22,8 +22,8 @@
     },
     {
       "label": "邮箱",
-      "value": "hello@example.com",
-      "url": "mailto:hello@example.com",
+      "value": "327664797@qq.com",
+      "url": "mailto:327664797@qq.com",
       "qr": ""
     }
   ],
